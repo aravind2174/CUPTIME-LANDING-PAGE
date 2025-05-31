@@ -247,7 +247,7 @@ const RegistrationForm: React.FC = () => {
                 {isSubmitting ? (
                   <span>Processing...</span>
                 ) : (
-                  <span>Complete Registration - ₹100</span>
+                  <span>Complete Registration - ₹99</span>
                 )}
               </button>
               
