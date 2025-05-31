@@ -24,9 +24,7 @@ const RegistrationForm: React.FC = () => {
       newErrors.email = 'Email is invalid';
     }
     if (!formData.phone.trim()) newErrors.phone = 'Phone number is required';
-    if (!formData.agreeToTerms) {
-      newErrors.agreeToTerms = 'You must agree to the terms and conditions';
-    }
+    if (!formData.agreeToTerms) newErrors.agreeToTerms = 'You must agree to the terms';
 
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
@@ -52,14 +50,16 @@ const RegistrationForm: React.FC = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    if (validateForm()) {
-      setIsSubmitting(true);
-      try {
-        const response = await fetch('https://script.google.com/macros/s/AKfycbxyrXjeTRPzvQsdNaa96pnsIHBzLinxxpc6-CBOtFCCvC6JK1GizGK0LDTTOJ-lABjD/exec', {
-          method: 'POST',
-          mode: 'no-cors',
+    if (!validateForm()) return;
+    setIsSubmitting(true);
+
+    try {
+      const response = await fetch(
+        "https://script.google.com/macros/s/AKfycbxyrXjeTRPzvQsdNaa96pnsIHBzLinxxpc6-CBOtFCCvC6JK1GizGK0LDTTOJ-lABjD/exec",
+        {
+          method: "POST",
           headers: {
-            'Content-Type': 'application/json'
+            "Content-Type": "application/json",
           },
           body: JSON.stringify({
             name: formData.name,
@@ -67,10 +67,13 @@ const RegistrationForm: React.FC = () => {
             phone: formData.phone,
             experience: formData.experience,
             expectations: formData.expectations
-          })
-        });
+          }),
+        }
+      );
 
-        setIsSubmitting(false);
+      const result = await response.json();
+
+      if (result.status === "success") {
         setIsSubmitted(true);
         setFormData({
           name: '',
@@ -80,10 +83,14 @@ const RegistrationForm: React.FC = () => {
           expectations: '',
           agreeToTerms: false
         });
-      } catch (error) {
-        console.error('Submission error:', error);
-        setIsSubmitting(false);
+      } else {
+        alert("Submission failed: " + result.message);
       }
+    } catch (error) {
+      alert("Error submitting form. Please try again.");
+      console.error(error);
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
@@ -114,13 +121,29 @@ const RegistrationForm: React.FC = () => {
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
                 <div>
                   <label htmlFor="name" className="block text-gray-700 font-medium mb-2">Full Name*</label>
-                  <input type="text" id="name" name="name" value={formData.name} onChange={handleChange} className={`w-full px-4 py-3 rounded-md border ${errors.name ? 'border-red-500' : 'border-gray-300'} focus:outline-none focus:ring-2 focus:ring-[#FF0200]`} placeholder="Your full name" />
+                  <input
+                    type="text"
+                    id="name"
+                    name="name"
+                    value={formData.name}
+                    onChange={handleChange}
+                    className={`w-full px-4 py-3 rounded-md border ${errors.name ? 'border-red-500' : 'border-gray-300'} focus:outline-none focus:ring-2 focus:ring-[#FF0200]`}
+                    placeholder="Your full name"
+                  />
                   {errors.name && <p className="text-red-500 text-sm mt-1">{errors.name}</p>}
                 </div>
 
                 <div>
                   <label htmlFor="email" className="block text-gray-700 font-medium mb-2">Email Address*</label>
-                  <input type="email" id="email" name="email" value={formData.email} onChange={handleChange} className={`w-full px-4 py-3 rounded-md border ${errors.email ? 'border-red-500' : 'border-gray-300'} focus:outline-none focus:ring-2 focus:ring-[#FF0200]`} placeholder="your.email@example.com" />
+                  <input
+                    type="email"
+                    id="email"
+                    name="email"
+                    value={formData.email}
+                    onChange={handleChange}
+                    className={`w-full px-4 py-3 rounded-md border ${errors.email ? 'border-red-500' : 'border-gray-300'} focus:outline-none focus:ring-2 focus:ring-[#FF0200]`}
+                    placeholder="your.email@example.com"
+                  />
                   {errors.email && <p className="text-red-500 text-sm mt-1">{errors.email}</p>}
                 </div>
               </div>
@@ -128,14 +151,28 @@ const RegistrationForm: React.FC = () => {
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
                 <div>
                   <label htmlFor="phone" className="block text-gray-700 font-medium mb-2">Phone Number*</label>
-                  <input type="tel" id="phone" name="phone" value={formData.phone} onChange={handleChange} className={`w-full px-4 py-3 rounded-md border ${errors.phone ? 'border-red-500' : 'border-gray-300'} focus:outline-none focus:ring-2 focus:ring-[#FF0200]`} placeholder="+91 916 916 1110" />
+                  <input
+                    type="tel"
+                    id="phone"
+                    name="phone"
+                    value={formData.phone}
+                    onChange={handleChange}
+                    className={`w-full px-4 py-3 rounded-md border ${errors.phone ? 'border-red-500' : 'border-gray-300'} focus:outline-none focus:ring-2 focus:ring-[#FF0200]`}
+                    placeholder="+91 916 916 1110"
+                  />
                   {errors.phone && <p className="text-red-500 text-sm mt-1">{errors.phone}</p>}
                 </div>
               </div>
 
               <div className="mb-6">
                 <label htmlFor="experience" className="block text-gray-700 font-medium mb-2">Business Experience</label>
-                <select id="experience" name="experience" value={formData.experience} onChange={handleChange} className="w-full px-4 py-3 rounded-md border border-gray-300 focus:outline-none focus:ring-2 focus:ring-[#FF0200] bg-white">
+                <select
+                  id="experience"
+                  name="experience"
+                  value={formData.experience}
+                  onChange={handleChange}
+                  className="w-full px-4 py-3 rounded-md border border-gray-300 focus:outline-none focus:ring-2 focus:ring-[#FF0200] bg-white"
+                >
                   <option value="">Select your experience level</option>
                   <option value="novice">Just starting out</option>
                   <option value="some">1-3 years experience</option>
@@ -146,25 +183,72 @@ const RegistrationForm: React.FC = () => {
 
               <div className="mb-8">
                 <label htmlFor="expectations" className="block text-gray-700 font-medium mb-2">What do you hope to learn from this webinar?</label>
-                <textarea id="expectations" name="expectations" value={formData.expectations} onChange={handleChange} rows={4} className="w-full px-4 py-3 rounded-md border border-gray-300 focus:outline-none focus:ring-2 focus:ring-[#FF0200]" placeholder="Share your expectations..."></textarea>
+                <textarea
+                  id="expectations"
+                  name="expectations"
+                  value={formData.expectations}
+                  onChange={handleChange}
+                  rows={4}
+                  className="w-full px-4 py-3 rounded-md border border-gray-300 focus:outline-none focus:ring-2 focus:ring-[#FF0200]"
+                  placeholder="Share your expectations..."
+                ></textarea>
               </div>
 
               <div className="mb-8">
                 <div className="flex items-start">
-                  <input type="checkbox" id="agreeToTerms" name="agreeToTerms" checked={formData.agreeToTerms} onChange={handleChange} className="mt-1 mr-3" />
-                  <label htmlFor="agreeToTerms" className={`text-gray-700 ${errors.agreeToTerms ? 'text-red-500' : ''}`}>I agree to the terms and conditions, including the privacy policy and cancellation policy.</label>
+                  <input
+                    type="checkbox"
+                    id="agreeToTerms"
+                    name="agreeToTerms"
+                    checked={formData.agreeToTerms}
+                    onChange={handleChange}
+                    className="mt-1 mr-3"
+                  />
+                  <label htmlFor="agreeToTerms" className={`text-gray-700 ${errors.agreeToTerms ? 'text-red-500' : ''}`}>
+                    I agree to the terms and conditions, including the privacy policy and cancellation policy.
+                  </label>
                 </div>
                 {errors.agreeToTerms && <p className="text-red-500 text-sm mt-1">{errors.agreeToTerms}</p>}
               </div>
 
-              <button type="submit" disabled={isSubmitting} className="w-full bg-[#FF0200] hover:bg-red-700 text-white py-4 px-6 rounded-md font-medium transition-colors flex items-center justify-center">
-                {isSubmitting ? 'Processing...' : 'Complete Registration - ₹99'}
+              <div className="bg-gray-50 p-6 rounded-lg mb-6">
+                <div className="flex items-center justify-between mb-4">
+                  <span className="text-gray-700 font-medium">Webinar Fee:</span>
+                  <span className="text-gray-700">₹100 <span className="line-through text-gray-400 ml-2">₹7,999</span></span>
+                </div>
+                <p className="text-sm text-gray-600 mb-4">
+                  Secure payment via credit card, debit card, or UPI. Your payment information is securely processed.
+                </p>
+                <div className="flex items-center space-x-3">
+                  <span className="text-sm text-gray-600">Payment Options:</span>
+                  <div className="flex space-x-2">
+                    <span className="bg-gray-200 px-2 py-1 rounded text-xs">Credit Card</span>
+                    <span className="bg-gray-200 px-2 py-1 rounded text-xs">Debit Card</span>
+                    <span className="bg-gray-200 px-2 py-1 rounded text-xs">UPI</span>
+                  </div>
+                </div>
+              </div>
+
+              <button
+                type="submit"
+                disabled={isSubmitting}
+                className="w-full bg-[#FF0200] hover:bg-red-700 text-white py-4 px-6 rounded-md font-medium transition-colors flex items-center justify-center"
+              >
+                {isSubmitting ? (
+                  <span>Processing...</span>
+                ) : (
+                  <span>Complete Registration - ₹99</span>
+                )}
               </button>
+
+              <p className="text-center text-gray-600 text-sm mt-4">
+                By registering, you confirm that you have read and agreed to our Terms and Conditions.
+              </p>
             </form>
           ) : (
             <div className="bg-white rounded-xl shadow-xl p-8 text-center">
-              <h3 className="text-2xl font-bold text-black mb-4">Thank you for registering!</h3>
-              <p className="text-gray-700">You will receive a confirmation email shortly with the webinar details.</p>
+              <h3 className="text-2xl font-bold text-green-600 mb-4">You're Registered!</h3>
+              <p className="text-gray-700">Check your email for confirmation and webinar details.</p>
             </div>
           )}
         </div>
