@@ -80,7 +80,7 @@ const Hero: React.FC = () => {
               </div>
               <div className="flex items-center mb-2">
                 <Coffee className="text-[#FF0200] w-4 h-4 mr-3" />
-                <p className="text-white"><span className="font-medium">Location:</span> Madurai, Tamil Nadu</p>
+                <p className="text-white"><span className="font-medium">Location:</span> Zoom Meeting</p>
               </div>
               <div className="flex items-center">
                 <Coffee className="text-[#FF0200] w-4 h-4 mr-3" />
