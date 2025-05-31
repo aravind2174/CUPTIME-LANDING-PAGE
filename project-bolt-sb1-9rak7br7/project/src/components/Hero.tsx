@@ -11,44 +11,45 @@ const Hero: React.FC = () => {
   const [earlyBirdMinutes, setEarlyBirdMinutes] = useState(0);
   const [earlyBirdSeconds, setEarlyBirdSeconds] = useState(0);
 
-  // Set webinar date to June 22, 2025
   useEffect(() => {
     const webinarDate = new Date('2025-06-22T11:00:00+05:30');
-    const earlyBirdEnd = new Date();
-    earlyBirdEnd.setHours(earlyBirdEnd.getHours() + 24);
-    
+
     const interval = setInterval(() => {
       const now = new Date();
+
+      // === Webinar Countdown ===
       const webinarDifference = webinarDate.getTime() - now.getTime();
-      const earlyBirdDifference = earlyBirdEnd.getTime() - now.getTime();
-      
       const d = Math.floor(webinarDifference / (1000 * 60 * 60 * 24));
       const h = Math.floor((webinarDifference % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
       const m = Math.floor((webinarDifference % (1000 * 60 * 60)) / (1000 * 60));
       const s = Math.floor((webinarDifference % (1000 * 60)) / 1000);
-      
-      const ebh = Math.floor(earlyBirdDifference / (1000 * 60 * 60));
-      const ebm = Math.floor((earlyBirdDifference % (1000 * 60 * 60)) / (1000 * 60));
-      const ebs = Math.floor((earlyBirdDifference % (1000 * 60)) / 1000);
-      
+
       setDays(d);
       setHours(h);
       setMinutes(m);
       setSeconds(s);
-      
+
+      // === 30-Minute Recurring Early Bird Timer ===
+      const millisSinceEpoch = now.getTime();
+      const millisInCycle = 30 * 60 * 1000;
+      const millisElapsedInCycle = millisSinceEpoch % millisInCycle;
+      const millisRemaining = millisInCycle - millisElapsedInCycle;
+
+      const ebh = Math.floor(millisRemaining / (1000 * 60 * 60));
+      const ebm = Math.floor((millisRemaining % (1000 * 60 * 60)) / (1000 * 60));
+      const ebs = Math.floor((millisRemaining % (1000 * 60)) / 1000);
+
       setEarlyBirdHours(ebh);
       setEarlyBirdMinutes(ebm);
       setEarlyBirdSeconds(ebs);
-      
     }, 1000);
-    
+
     return () => clearInterval(interval);
   }, []);
 
   return (
     <div className="relative min-h-screen flex items-center bg-black overflow-hidden">
       <div className="absolute inset-0 bg-gradient-to-b from-black via-black to-[#250000]"></div>
-      
       <div className="absolute -top-32 -right-32 w-64 h-64 bg-[#FF0200] opacity-20 rounded-full blur-3xl"></div>
       <div className="absolute -bottom-32 -left-32 w-64 h-64 bg-[#FF0200] opacity-20 rounded-full blur-3xl"></div>
       
