@@ -75,7 +75,7 @@ const Footer: React.FC = () => {
         <div className="border-t border-gray-800 pt-8">
           <div className="flex flex-col md:flex-row justify-between items-center">
             <p className="text-gray-400 text-sm mb-4 md:mb-0">
-              © {currentYear} FranchiseMastery. All rights reserved.
+              © {currentYear}cuptime. All rights reserved.
             </p>
             <div className="flex items-center space-x-2">
               <span className="text-gray-400 text-sm">Made with</span>
