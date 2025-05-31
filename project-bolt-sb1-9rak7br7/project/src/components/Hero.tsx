@@ -6,10 +6,10 @@ const Hero: React.FC = () => {
   const [hours, setHours] = useState(0);
   const [minutes, setMinutes] = useState(0);
   const [seconds, setSeconds] = useState(0);
-  
   const [earlyBirdHours, setEarlyBirdHours] = useState(0);
   const [earlyBirdMinutes, setEarlyBirdMinutes] = useState(0);
   const [earlyBirdSeconds, setEarlyBirdSeconds] = useState(0);
+  const [activeTab, setActiveTab] = useState<'webinar' | 'seats'>('webinar');
 
   useEffect(() => {
     const webinarDate = new Date('2025-06-22T11:00:00+05:30');
@@ -17,7 +17,6 @@ const Hero: React.FC = () => {
     const interval = setInterval(() => {
       const now = new Date();
 
-      // === Webinar Countdown ===
       const webinarDifference = webinarDate.getTime() - now.getTime();
       const d = Math.floor(webinarDifference / (1000 * 60 * 60 * 24));
       const h = Math.floor((webinarDifference % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
@@ -29,7 +28,6 @@ const Hero: React.FC = () => {
       setMinutes(m);
       setSeconds(s);
 
-      // === 30-Minute Recurring Early Bird Timer ===
       const millisSinceEpoch = now.getTime();
       const millisInCycle = 30 * 60 * 1000;
       const millisElapsedInCycle = millisSinceEpoch % millisInCycle;
@@ -52,23 +50,45 @@ const Hero: React.FC = () => {
       <div className="absolute inset-0 bg-gradient-to-b from-black via-black to-[#250000]"></div>
       <div className="absolute -top-32 -right-32 w-64 h-64 bg-[#FF0200] opacity-20 rounded-full blur-3xl"></div>
       <div className="absolute -bottom-32 -left-32 w-64 h-64 bg-[#FF0200] opacity-20 rounded-full blur-3xl"></div>
-      
+
       <div className="container mx-auto px-4 md:px-6 py-24 pt-32 relative z-10">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-12">
           <div className="lg:col-span-7 flex flex-col justify-center">
-            <div className="inline-block mb-6">
-              <span className="bg-white/10 text-white px-3 py-1 rounded-full text-sm">Live Webinar</span>
-              <span className="bg-[#FF0200] text-white px-3 py-1 rounded-full text-sm ml-2">Limited Seats</span>
+            <div className="inline-block mb-6 space-x-2">
+              <button
+                onClick={() => setActiveTab('webinar')}
+                className={`px-3 py-1 rounded-full text-sm font-medium transition-colors ${
+                  activeTab === 'webinar' ? 'bg-[#FF0200] text-white' : 'bg-white/10 text-white'
+                }`}
+              >
+                Live Webinar
+              </button>
+
+              <button
+                onClick={() => setActiveTab('seats')}
+                className={`px-3 py-1 rounded-full text-sm font-medium transition-colors ${
+                  activeTab === 'seats' ? 'bg-[#FF0200] text-white' : 'bg-white/10 text-white'
+                }`}
+              >
+                Limited Seats
+              </button>
             </div>
-            
+
             <h1 className="text-3xl md:text-5xl lg:text-6xl font-bold text-white leading-tight mb-6">
               The Ultimate <span className="text-[#FF0200]">Franchise Masterclass</span> by Cup Time
             </h1>
-            
-            <p className="text-gray-300 text-lg mb-8 max-w-2xl">
-              100+ Students Mentored | Expert Mentorship | B2B Tech Innovation
-            </p>
-            
+
+            {activeTab === 'webinar' ? (
+              <p className="text-gray-300 text-lg mb-8 max-w-2xl">
+                Join the live session and unlock franchise insights.<br />
+                Learn directly from the minds behind Cup Time.
+              </p>
+            ) : (
+              <p className="text-gray-300 text-lg mb-8 max-w-2xl">
+                100+ Students Mentored | Expert Mentorship | B2B Tech Innovation
+              </p>
+            )}
+
             <div className="mb-8">
               <div className="flex items-center mb-2">
                 <Coffee className="text-[#FF0200] w-4 h-4 mr-3" />
@@ -87,7 +107,7 @@ const Hero: React.FC = () => {
                 <p className="text-white"><span className="font-medium">Contact:</span> +91 916 916 1110</p>
               </div>
             </div>
-            
+
             <div className="flex flex-wrap gap-4 mb-10">
               <a 
                 href="#register" 
@@ -102,35 +122,27 @@ const Hero: React.FC = () => {
                 Meet the Expert
               </a>
             </div>
-            
+
             <div className="text-gray-300 text-sm">
               <span className="font-bold text-white">100+ STUDENTS MENTORED</span> and counting. Limited seats available.
             </div>
           </div>
-          
+
           <div className="lg:col-span-5">
             <div className="bg-gradient-to-b from-black to-[#250000] border border-white/10 rounded-xl p-6 backdrop-blur-sm">
               <h3 className="text-white text-xl font-semibold mb-6">Webinar Starts In:</h3>
-              
+
               <div className="grid grid-cols-4 gap-4 mb-6">
-                <div className="bg-black/50 rounded-lg p-4 text-center border border-white/10">
-                  <div className="text-3xl md:text-4xl font-bold text-white mb-2">{days}</div>
-                  <div className="text-gray-400 text-sm">Days</div>
-                </div>
-                <div className="bg-black/50 rounded-lg p-4 text-center border border-white/10">
-                  <div className="text-3xl md:text-4xl font-bold text-white mb-2">{hours}</div>
-                  <div className="text-gray-400 text-sm">Hours</div>
-                </div>
-                <div className="bg-black/50 rounded-lg p-4 text-center border border-white/10">
-                  <div className="text-3xl md:text-4xl font-bold text-white mb-2">{minutes}</div>
-                  <div className="text-gray-400 text-sm">Minutes</div>
-                </div>
-                <div className="bg-black/50 rounded-lg p-4 text-center border border-white/10">
-                  <div className="text-3xl md:text-4xl font-bold text-white mb-2">{seconds}</div>
-                  <div className="text-gray-400 text-sm">Seconds</div>
-                </div>
+                {[{ value: days, label: 'Days' }, { value: hours, label: 'Hours' }, { value: minutes, label: 'Minutes' }, { value: seconds, label: 'Seconds' }]
+                  .map(({ value, label }, i) => (
+                    <div key={i} className="bg-black/50 rounded-lg p-4 text-center border border-white/10">
+                      <div className="text-3xl md:text-4xl font-bold text-white mb-2">{value}</div>
+                      <div className="text-gray-400 text-sm">{label}</div>
+                    </div>
+                ))}
+
               </div>
-              
+
               <div className="bg-[#FF0200]/10 border border-[#FF0200]/20 rounded-lg p-4 mb-6">
                 <div className="flex items-start">
                   <div className="min-w-8 h-8 bg-[#FF0200] rounded-full flex items-center justify-center mr-4">
@@ -150,7 +162,7 @@ const Hero: React.FC = () => {
                   </div>
                 </div>
               </div>
-              
+
               <a 
                 href="#register" 
                 className="bg-[#FF0200] hover:bg-red-700 text-white py-3 px-6 rounded-md font-medium transition-colors block text-center w-full"
