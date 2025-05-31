@@ -144,7 +144,7 @@ const Hero: React.FC = () => {
                     </div>
                     <p className="text-gray-300 text-sm">
                       Regular Price: <span className="line-through">₹7,999</span><br />
-                      Early Bird Price: <span className="font-bold text-white">₹100</span>
+                      Early Bird Price: <span className="font-bold text-white">₹99</span>
                     </p>
                   </div>
                 </div>
@@ -154,7 +154,7 @@ const Hero: React.FC = () => {
                 href="#register" 
                 className="bg-[#FF0200] hover:bg-red-700 text-white py-3 px-6 rounded-md font-medium transition-colors block text-center w-full"
               >
-                Secure Your Spot for Just ₹100
+                Secure Your Spot for Just ₹99
               </a>
             </div>
           </div>
