@@ -84,13 +84,9 @@ const RegistrationForm: React.FC = () => {
           agreeToTerms: false
         });
       } else {
-        alert("Submission failed: " + result.message);
       }
     } catch (error) {
-      alert("Error submitting form. Please try again.");
-      console.error(error);
     } finally {
-      setIsSubmitting(false);
     }
   };
 
