@@ -12,19 +12,21 @@ const ExpertProfile: React.FC = () => {
           </p>
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
-          {/* Expert Image */}
-          <div className="relative flex justify-center lg:justify-end">
-            <div className="relative w-full max-w-md lg:max-w-lg rounded-2xl overflow-hidden shadow-lg z-10">
-              <img
-                src="https://assets.coffeemug.ai/li-files/image-d30730e4-4a94-476f-b6c5-f470d8b53f20.jpg"
-                alt="Prabhakaran Venugopal"
-                className="w-full h-auto object-cover aspect-[4/5] rounded-2xl"
-              />
-            </div>
-            <div className="absolute -bottom-6 -right-6 w-36 h-36 bg-[#FF0200] rounded-full opacity-10 z-0"></div>
-            <div className="absolute -top-6 -left-6 w-28 h-28 bg-black rounded-full opacity-10 z-0"></div>
-          </div>
+       <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+  {/* Expert Image */}
+  <div className="relative w-full max-w-md lg:max-w-lg mx-auto lg:mx-0">
+    <div className="relative overflow-hidden rounded-2xl shadow-lg z-10">
+      <img
+        src="https://assets.coffeemug.ai/li-files/image-d30730e4-4a94-476f-b6c5-f470d8b53f20.jpg"
+        alt="Prabhakaran Venugopal"
+        className="w-full h-auto object-cover aspect-[4/5] rounded-2xl"
+      />
+    </div>
+
+    {/* Background Circles */}
+    <div className="absolute -bottom-6 -right-6 w-36 h-36 bg-[#FF0200] rounded-full opacity-10 z-0"></div>
+    <div className="absolute -top-6 -left-6 w-28 h-28 bg-black rounded-full opacity-10 z-0"></div>
+  </div>
 
           {/* Expert Info */}
           <div className="text-center lg:text-left">
