@@ -7,16 +7,14 @@ const RegistrationForm: React.FC = () => {
     phone: '',
     experience: '',
     expectations: '',
-    agreeToTerms: false
+    agreeToTerms: false,
+    showQR: false, // NEW
+    paymentScreenshot: null as File | null // NEW
   });
 
   const [errors, setErrors] = useState<{ [key: string]: string }>({});
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSubmitted, setIsSubmitted] = useState(false);
-
-  useEffect(() => {
-    console.log("Form component mounted");
-  }, []);
 
   const validateForm = () => {
     const newErrors: { [key: string]: string } = {};
@@ -35,12 +33,12 @@ const RegistrationForm: React.FC = () => {
   };
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
-    const { name, value, type } = e.target;
-    const checked = (e.target as HTMLInputElement).checked;
+    const { name, type } = e.target;
+    const value = type === 'checkbox' ? (e.target as HTMLInputElement).checked : e.target.value;
 
     setFormData(prev => ({
       ...prev,
-      [name]: type === 'checkbox' ? checked : value
+      [name]: value
     }));
 
     if (errors[name]) {
@@ -51,32 +49,45 @@ const RegistrationForm: React.FC = () => {
     }
   };
 
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0] || null;
+    setFormData(prev => ({
+      ...prev,
+      paymentScreenshot: file
+    }));
+  };
+
+  const toggleQR = () => {
+    setFormData(prev => ({
+      ...prev,
+      showQR: !prev.showQR
+    }));
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-
     if (!validateForm()) return;
     setIsSubmitting(true);
 
     try {
-      const response = await fetch(
-        "https://script.google.com/macros/s/AKfycbxyrXjeTRPzvQsdNaa96pnsIHBzLinxxpc6-CBOtFCCvC6JK1GizGK0LDTTOJ-lABjD/exec",
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json"
-          },
-          body: JSON.stringify({
-            name: formData.name,
-            email: formData.email,
-            phone: formData.phone,
-            experience: formData.experience,
-            expectations: formData.expectations
-          }),
-        }
-      );
+      // Placeholder for Apps Script form submission
+      const response = await fetch("https://script.google.com/macros/s/YOUR-URL/exec", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+          name: formData.name,
+          email: formData.email,
+          phone: formData.phone,
+          experience: formData.experience,
+          expectations: formData.expectations
+        }),
+      });
 
-      if (!response.ok) throw new Error("Network response was not ok");
+      if (!response.ok) throw new Error("Submission failed");
 
+      // Reset form after submission
       setIsSubmitted(true);
       setFormData({
         name: '',
@@ -84,10 +95,12 @@ const RegistrationForm: React.FC = () => {
         phone: '',
         experience: '',
         expectations: '',
-        agreeToTerms: false
+        agreeToTerms: false,
+        showQR: false,
+        paymentScreenshot: null
       });
-    } catch (error) {
-      console.error("Error submitting form:", error);
+    } catch (err) {
+      console.error("Error:", err);
     } finally {
       setIsSubmitting(false);
     }
@@ -95,17 +108,11 @@ const RegistrationForm: React.FC = () => {
 
   return (
     <section id="register" className="py-20 bg-black relative">
-      <div className="absolute inset-0 overflow-hidden z-0">
-        <div className="absolute -top-32 -left-32 w-64 h-64 bg-[#FF0200] opacity-10 rounded-full blur-3xl"></div>
-        <div className="absolute -bottom-32 -right-32 w-64 h-64 bg-[#FF0200] opacity-10 rounded-full blur-3xl"></div>
-      </div>
-
       <div className="container mx-auto px-4 md:px-6 relative z-10">
         <div className="text-center mb-16">
           <h2 className="text-3xl md:text-4xl font-bold text-white mb-4">Register for the Webinar</h2>
-          <div className="w-20 h-1 bg-[#FF0200] mx-auto mb-6"></div>
           <p className="text-gray-300 max-w-2xl mx-auto">
-            Secure your spot in this exclusive webinar and take the first step toward building a successful franchise business.
+            Secure your spot and take the first step toward building a successful franchise business.
           </p>
         </div>
 
@@ -114,49 +121,24 @@ const RegistrationForm: React.FC = () => {
             <form onSubmit={handleSubmit} className="bg-white rounded-xl shadow-xl p-8 border border-gray-300">
               <div className="mb-8">
                 <h3 className="text-2xl font-bold text-black mb-2">Personal Information</h3>
-                <p className="text-gray-600">Enter your details to register for the webinar</p>
+                <p className="text-gray-600">Fill in your details below</p>
               </div>
 
-              {/* Name */}
-              <div className="mb-4">
-                <label className="block text-gray-700">Name</label>
-                <input
-                  type="text"
-                  name="name"
-                  value={formData.name}
-                  onChange={handleChange}
-                  className="w-full border px-4 py-2 rounded"
-                />
-                {errors.name && <p className="text-red-500 text-sm">{errors.name}</p>}
-              </div>
+              {/* Standard Fields */}
+              {['name', 'email', 'phone'].map((field) => (
+                <div className="mb-4" key={field}>
+                  <label className="block text-gray-700 capitalize">{field}</label>
+                  <input
+                    type={field === 'email' ? 'email' : 'text'}
+                    name={field}
+                    value={(formData as any)[field]}
+                    onChange={handleChange}
+                    className="w-full border px-4 py-2 rounded"
+                  />
+                  {errors[field] && <p className="text-red-500 text-sm">{errors[field]}</p>}
+                </div>
+              ))}
 
-              {/* Email */}
-              <div className="mb-4">
-                <label className="block text-gray-700">Email</label>
-                <input
-                  type="email"
-                  name="email"
-                  value={formData.email}
-                  onChange={handleChange}
-                  className="w-full border px-4 py-2 rounded"
-                />
-                {errors.email && <p className="text-red-500 text-sm">{errors.email}</p>}
-              </div>
-
-              {/* Phone */}
-              <div className="mb-4">
-                <label className="block text-gray-700">Phone Number</label>
-                <input
-                  type="tel"
-                  name="phone"
-                  value={formData.phone}
-                  onChange={handleChange}
-                  className="w-full border px-4 py-2 rounded"
-                />
-                {errors.phone && <p className="text-red-500 text-sm">{errors.phone}</p>}
-              </div>
-
-              {/* Experience */}
               <div className="mb-4">
                 <label className="block text-gray-700">Business Experience (optional)</label>
                 <textarea
@@ -167,7 +149,6 @@ const RegistrationForm: React.FC = () => {
                 />
               </div>
 
-              {/* Expectations */}
               <div className="mb-4">
                 <label className="block text-gray-700">What do you expect from the webinar? (optional)</label>
                 <textarea
@@ -178,7 +159,42 @@ const RegistrationForm: React.FC = () => {
                 />
               </div>
 
-              {/* Terms */}
+              {/* NEW: QR Dropdown */}
+              <div className="mb-4">
+                <label className="block text-gray-700 mb-2">How would you like to make the payment?</label>
+                <button
+                  type="button"
+                  onClick={toggleQR}
+                  className="text-blue-600 underline text-sm"
+                >
+                  {formData.showQR ? 'Hide QR Code' : 'Click here to show QR Code'}
+                </button>
+                {formData.showQR && (
+                  <div className="mt-4 p-4 border rounded bg-gray-100 text-center">
+                    <img
+                      src="/path-to-your-qr-code.png"
+                      alt="Payment QR Code"
+                      className="w-48 h-48 mx-auto"
+                    />
+                    <p className="text-gray-600 mt-2">Scan to pay via UPI</p>
+                  </div>
+                )}
+              </div>
+
+              {/* NEW: Screenshot Upload */}
+              <div className="mb-4">
+                <label className="block text-gray-700 mb-2">Upload your payment screenshot</label>
+                <input
+                  type="file"
+                  accept="image/*"
+                  onChange={handleFileChange}
+                  className="w-full"
+                />
+                {formData.paymentScreenshot && (
+                  <p className="text-sm text-green-600 mt-2">File selected: {formData.paymentScreenshot.name}</p>
+                )}
+              </div>
+
               <div className="mb-4">
                 <label className="flex items-center">
                   <input
