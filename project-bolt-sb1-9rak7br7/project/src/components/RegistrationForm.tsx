@@ -172,7 +172,7 @@ const RegistrationForm: React.FC = () => {
                 {formData.showQR && (
                   <div className="mt-4 p-4 border rounded bg-gray-100 text-center">
                     <img
-                      src="https://drive.google.com/file/d/1RF4rk-uIXN15uDmCxu11gswNBpQKuPVz/view?usp=sharing"
+                      src="https://www.the-qrcode-generator.com/wp-content/themes/tqrcg/new_widget/assets/templates-with-watermark/watermark-template-1.svg"
                       alt="Payment QR Code"
                       className="w-48 h-48 mx-auto"
                     />
