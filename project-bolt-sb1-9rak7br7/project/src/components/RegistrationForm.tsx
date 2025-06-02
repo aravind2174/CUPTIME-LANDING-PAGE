@@ -58,11 +58,10 @@ const RegistrationForm: React.FC = () => {
     setIsSubmitting(true);
 
     try {
-      const response = await fetch(
+      await fetch(
         "https://script.google.com/macros/s/AKfycbxyrXjeTRPzvQsdNaa96pnsIHBzLinxxpc6-CBOtFCCvC6JK1GizGK0LDTTOJ-lABjD/exec",
         {
           method: "POST",
-          mode: "no-cors",
           headers: {
             "Content-Type": "application/json",
           },
@@ -76,7 +75,6 @@ const RegistrationForm: React.FC = () => {
         }
       );
 
-      // no-cors will always return opaque response, assume success
       setIsSubmitted(true);
       setFormData({
         name: '',
@@ -116,8 +114,92 @@ const RegistrationForm: React.FC = () => {
                 <h3 className="text-2xl font-bold text-black mb-2">Personal Information</h3>
                 <p className="text-gray-600">Enter your details to register for the webinar</p>
               </div>
-              <!-- [form inputs remain unchanged, already provided and complete] -->
-              <!-- include form inputs and error handling here -->
+
+              {/* Name */}
+              <div className="mb-4">
+                <label className="block text-gray-700">Name</label>
+                <input
+                  type="text"
+                  name="name"
+                  value={formData.name}
+                  onChange={handleChange}
+                  className="w-full border px-4 py-2 rounded"
+                />
+                {errors.name && <p className="text-red-500 text-sm">{errors.name}</p>}
+              </div>
+
+              {/* Email */}
+              <div className="mb-4">
+                <label className="block text-gray-700">Email</label>
+                <input
+                  type="email"
+                  name="email"
+                  value={formData.email}
+                  onChange={handleChange}
+                  className="w-full border px-4 py-2 rounded"
+                />
+                {errors.email && <p className="text-red-500 text-sm">{errors.email}</p>}
+              </div>
+
+              {/* Phone */}
+              <div className="mb-4">
+                <label className="block text-gray-700">Phone Number</label>
+                <input
+                  type="tel"
+                  name="phone"
+                  value={formData.phone}
+                  onChange={handleChange}
+                  className="w-full border px-4 py-2 rounded"
+                />
+                {errors.phone && <p className="text-red-500 text-sm">{errors.phone}</p>}
+              </div>
+
+              {/* Experience */}
+              <div className="mb-4">
+                <label className="block text-gray-700">Business Experience (optional)</label>
+                <textarea
+                  name="experience"
+                  value={formData.experience}
+                  onChange={handleChange}
+                  className="w-full border px-4 py-2 rounded"
+                />
+              </div>
+
+              {/* Expectations */}
+              <div className="mb-4">
+                <label className="block text-gray-700">What do you expect from the webinar? (optional)</label>
+                <textarea
+                  name="expectations"
+                  value={formData.expectations}
+                  onChange={handleChange}
+                  className="w-full border px-4 py-2 rounded"
+                />
+              </div>
+
+              {/* Terms */}
+              <div className="mb-4">
+                <label className="flex items-center">
+                  <input
+                    type="checkbox"
+                    name="agreeToTerms"
+                    checked={formData.agreeToTerms}
+                    onChange={handleChange}
+                    className="mr-2"
+                  />
+                  <span className="text-gray-700">I agree to the terms and conditions</span>
+                </label>
+                {errors.agreeToTerms && <p className="text-red-500 text-sm">{errors.agreeToTerms}</p>}
+              </div>
+
+              <button
+                type="submit"
+                className={`w-full py-2 rounded bg-[#FF0200] text-white font-bold ${
+                  isSubmitting ? 'opacity-50 cursor-not-allowed' : ''
+                }`}
+                disabled={isSubmitting}
+              >
+                {isSubmitting ? 'Submitting...' : 'Register'}
+              </button>
             </form>
           ) : (
             <div className="bg-white rounded-xl shadow-xl p-8 text-center">
