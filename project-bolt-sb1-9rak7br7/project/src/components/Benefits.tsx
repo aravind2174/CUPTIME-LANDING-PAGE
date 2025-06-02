@@ -117,7 +117,7 @@ const Benefits: React.FC = () => {
                   </div>
                   <div className="flex items-center justify-between">
                     <span className="text-white font-medium">You Save:</span>
-                    <span className="text-white font-medium">₹4,899 (60%)</span>
+                    <span className="text-white font-medium">₹4,899 </span>
                   </div>
                 </div>
               </div>
