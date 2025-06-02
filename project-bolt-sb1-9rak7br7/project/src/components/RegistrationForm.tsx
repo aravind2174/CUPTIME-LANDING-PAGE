@@ -36,7 +36,7 @@ const RegistrationForm: React.FC = () => {
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     const { name, value, type } = e.target;
-    const checked = type === 'checkbox' ? (e.target as HTMLInputElement).checked : undefined;
+    const checked = (e.target as HTMLInputElement).checked;
 
     setFormData(prev => ({
       ...prev,
@@ -58,12 +58,12 @@ const RegistrationForm: React.FC = () => {
     setIsSubmitting(true);
 
     try {
-      await fetch(
+      const response = await fetch(
         "https://script.google.com/macros/s/AKfycbxyrXjeTRPzvQsdNaa96pnsIHBzLinxxpc6-CBOtFCCvC6JK1GizGK0LDTTOJ-lABjD/exec",
         {
           method: "POST",
           headers: {
-            "Content-Type": "application/json",
+            "Content-Type": "application/json"
           },
           body: JSON.stringify({
             name: formData.name,
@@ -74,6 +74,8 @@ const RegistrationForm: React.FC = () => {
           }),
         }
       );
+
+      if (!response.ok) throw new Error("Network response was not ok");
 
       setIsSubmitted(true);
       setFormData({
