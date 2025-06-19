@@ -44,13 +44,38 @@ const RegistrationForm: React.FC = () => {
     }
   };
 
-  const handleRedirect = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!validateForm()) return;
-    setIsSubmitted(true);
 
-    window.location.href =
-      'https://docs.google.com/forms/d/e/1FAIpQLSfrREEvw5j8BN0A7h7S3Jwb1pz163QjjgqEzQymUIla9pvboA/viewform?usp=header';
+    try {
+      const response = await fetch('https://script.google.com/macros/s/AKfycbw6A4EQT4tLiPyUPT0H77r65aL1eWYqsxaKcNbjyhrJlgVxwsQkHHF-LZqEIpkZksI6/exec', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          name: formData.name,
+          email: formData.email,
+          phone: formData.phone,
+          experience: formData.experience,
+          expectations: formData.expectations
+        })
+      });
+
+      if (!response.ok) throw new Error('Failed to submit');
+
+      setIsSubmitted(true);
+
+      // Redirect after successful submission
+      setTimeout(() => {
+        window.location.href = 'https://docs.google.com/forms/d/e/1FAIpQLSfrREEvw5j8BN0A7h7S3Jwb1pz163QjjgqEzQymUIla9pvboA/viewform?usp=header';
+      }, 1000);
+
+    } catch (err) {
+      console.error('Error:', err);
+      alert('Something went wrong. Please try again.');
+    }
   };
 
   return (
@@ -65,7 +90,7 @@ const RegistrationForm: React.FC = () => {
 
         <div className="max-w-3xl mx-auto">
           {!isSubmitted ? (
-            <form onSubmit={handleRedirect} className="bg-white rounded-xl shadow-xl p-8 border border-gray-300">
+            <form onSubmit={handleSubmit} className="bg-white rounded-xl shadow-xl p-8 border border-gray-300">
               <div className="mb-8">
                 <h3 className="text-2xl font-bold text-black mb-2">Personal Information</h3>
                 <p className="text-gray-600">Fill in your details below</p>
