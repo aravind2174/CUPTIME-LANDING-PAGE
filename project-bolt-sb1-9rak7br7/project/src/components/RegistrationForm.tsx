@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 
 const RegistrationForm: React.FC = () => {
   const [formData, setFormData] = useState({
@@ -7,9 +7,7 @@ const RegistrationForm: React.FC = () => {
     phone: '',
     experience: '',
     expectations: '',
-    agreeToTerms: false,
-    showQR: false, // NEW
-    paymentScreenshot: null as File | null // NEW
+    agreeToTerms: false
   });
 
   const [errors, setErrors] = useState<{ [key: string]: string }>({});
@@ -32,13 +30,11 @@ const RegistrationForm: React.FC = () => {
     return Object.keys(newErrors).length === 0;
   };
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
-    const { name, type } = e.target;
-    const value = type === 'checkbox' ? (e.target as HTMLInputElement).checked : e.target.value;
-
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+    const { name, type, value, checked } = e.target;
     setFormData(prev => ({
       ...prev,
-      [name]: value
+      [name]: type === 'checkbox' ? checked : value
     }));
 
     if (errors[name]) {
@@ -49,28 +45,12 @@ const RegistrationForm: React.FC = () => {
     }
   };
 
-  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0] || null;
-    setFormData(prev => ({
-      ...prev,
-      paymentScreenshot: file
-    }));
-  };
-
-  const toggleQR = () => {
-    setFormData(prev => ({
-      ...prev,
-      showQR: !prev.showQR
-    }));
-  };
-
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!validateForm()) return;
     setIsSubmitting(true);
 
     try {
-      // Placeholder for Apps Script form submission
       const response = await fetch("https://script.google.com/macros/s/YOUR-URL/exec", {
         method: "POST",
         headers: {
@@ -87,7 +67,6 @@ const RegistrationForm: React.FC = () => {
 
       if (!response.ok) throw new Error("Submission failed");
 
-      // Reset form after submission
       setIsSubmitted(true);
       setFormData({
         name: '',
@@ -95,9 +74,7 @@ const RegistrationForm: React.FC = () => {
         phone: '',
         experience: '',
         expectations: '',
-        agreeToTerms: false,
-        showQR: false,
-        paymentScreenshot: null
+        agreeToTerms: false
       });
     } catch (err) {
       console.error("Error:", err);
@@ -124,7 +101,7 @@ const RegistrationForm: React.FC = () => {
                 <p className="text-gray-600">Fill in your details below</p>
               </div>
 
-              {/* Standard Fields */}
+              {/* Name, Email, Phone */}
               {['name', 'email', 'phone'].map((field) => (
                 <div className="mb-4" key={field}>
                   <label className="block text-gray-700 capitalize">{field}</label>
@@ -139,6 +116,7 @@ const RegistrationForm: React.FC = () => {
                 </div>
               ))}
 
+              {/* Optional Fields */}
               <div className="mb-4">
                 <label className="block text-gray-700">Business Experience (optional)</label>
                 <textarea
@@ -159,42 +137,7 @@ const RegistrationForm: React.FC = () => {
                 />
               </div>
 
-              {/* NEW: QR Dropdown */}
-              <div className="mb-4">
-                <label className="block text-gray-700 mb-2">How would you like to make the payment?</label>
-                <button
-                  type="button"
-                  onClick={toggleQR}
-                  className="text-blue-600 underline text-sm"
-                >
-                  {formData.showQR ? 'Hide QR Code' : 'Click here to show QR Code'}
-                </button>
-                {formData.showQR && (
-                  <div className="mt-4 p-4 border rounded bg-gray-100 text-center">
-                    <img
-                      src="https://www.the-qrcode-generator.com/wp-content/themes/tqrcg/new_widget/assets/templates-with-watermark/watermark-template-1.svg"
-                      alt="Payment QR Code"
-                      className="w-48 h-48 mx-auto"
-                    />
-                    <p className="text-gray-600 mt-2">Scan to pay via UPI</p>
-                  </div>
-                )}
-              </div>
-
-              {/* NEW: Screenshot Upload */}
-              <div className="mb-4">
-                <label className="block text-gray-700 mb-2">Upload your payment screenshot</label>
-                <input
-                  type="file"
-                  accept="image/*"
-                  onChange={handleFileChange}
-                  className="w-full"
-                />
-                {formData.paymentScreenshot && (
-                  <p className="text-sm text-green-600 mt-2">File selected: {formData.paymentScreenshot.name}</p>
-                )}
-              </div>
-
+              {/* Terms and Conditions */}
               <div className="mb-4">
                 <label className="flex items-center">
                   <input
