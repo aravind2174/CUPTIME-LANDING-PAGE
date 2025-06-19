@@ -11,7 +11,6 @@ const RegistrationForm: React.FC = () => {
   });
 
   const [errors, setErrors] = useState<{ [key: string]: string }>({});
-  const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSubmitted, setIsSubmitted] = useState(false);
 
   const validateForm = () => {
@@ -45,42 +44,13 @@ const RegistrationForm: React.FC = () => {
     }
   };
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleRedirect = (e: React.FormEvent) => {
     e.preventDefault();
     if (!validateForm()) return;
-    setIsSubmitting(true);
+    setIsSubmitted(true);
 
-    try {
-      const response = await fetch("https://script.google.com/macros/s/YOUR-URL/exec", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json"
-        },
-        body: JSON.stringify({
-          name: formData.name,
-          email: formData.email,
-          phone: formData.phone,
-          experience: formData.experience,
-          expectations: formData.expectations
-        }),
-      });
-
-      if (!response.ok) throw new Error("Submission failed");
-
-      setIsSubmitted(true);
-      setFormData({
-        name: '',
-        email: '',
-        phone: '',
-        experience: '',
-        expectations: '',
-        agreeToTerms: false
-      });
-    } catch (err) {
-      console.error("Error:", err);
-    } finally {
-      setIsSubmitting(false);
-    }
+    window.location.href =
+      'https://docs.google.com/forms/d/e/1FAIpQLSfrREEvw5j8BN0A7h7S3Jwb1pz163QjjgqEzQymUIla9pvboA/viewform?usp=header';
   };
 
   return (
@@ -95,13 +65,12 @@ const RegistrationForm: React.FC = () => {
 
         <div className="max-w-3xl mx-auto">
           {!isSubmitted ? (
-            <form onSubmit={handleSubmit} className="bg-white rounded-xl shadow-xl p-8 border border-gray-300">
+            <form onSubmit={handleRedirect} className="bg-white rounded-xl shadow-xl p-8 border border-gray-300">
               <div className="mb-8">
                 <h3 className="text-2xl font-bold text-black mb-2">Personal Information</h3>
                 <p className="text-gray-600">Fill in your details below</p>
               </div>
 
-              {/* Name, Email, Phone */}
               {['name', 'email', 'phone'].map((field) => (
                 <div className="mb-4" key={field}>
                   <label className="block text-gray-700 capitalize">{field}</label>
@@ -116,7 +85,6 @@ const RegistrationForm: React.FC = () => {
                 </div>
               ))}
 
-              {/* Optional Fields */}
               <div className="mb-4">
                 <label className="block text-gray-700">Business Experience (optional)</label>
                 <textarea
@@ -137,7 +105,6 @@ const RegistrationForm: React.FC = () => {
                 />
               </div>
 
-              {/* Terms and Conditions */}
               <div className="mb-4">
                 <label className="flex items-center">
                   <input
@@ -154,18 +121,15 @@ const RegistrationForm: React.FC = () => {
 
               <button
                 type="submit"
-                className={`w-full py-2 rounded bg-[#FF0200] text-white font-bold ${
-                  isSubmitting ? 'opacity-50 cursor-not-allowed' : ''
-                }`}
-                disabled={isSubmitting}
+                className="w-full py-2 rounded bg-[#FF0200] text-white font-bold"
               >
-                {isSubmitting ? 'Submitting...' : 'Register'}
+                Click here to make the payment
               </button>
             </form>
           ) : (
             <div className="bg-white rounded-xl shadow-xl p-8 text-center">
-              <h3 className="text-2xl font-bold text-green-600 mb-4">You're Registered!</h3>
-              <p className="text-gray-700">Check your email for confirmation and webinar details.</p>
+              <h3 className="text-2xl font-bold text-green-600 mb-4">You're being redirected!</h3>
+              <p className="text-gray-700">Hang tight… you’re headed to the payment form.</p>
             </div>
           )}
         </div>
