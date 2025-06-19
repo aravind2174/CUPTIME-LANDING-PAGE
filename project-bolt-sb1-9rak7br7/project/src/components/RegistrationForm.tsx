@@ -15,7 +15,6 @@ const RegistrationForm: React.FC = () => {
 
   const validateForm = () => {
     const newErrors: { [key: string]: string } = {};
-
     if (!formData.name.trim()) newErrors.name = 'Name is required';
     if (!formData.email.trim()) {
       newErrors.email = 'Email is required';
@@ -24,7 +23,6 @@ const RegistrationForm: React.FC = () => {
     }
     if (!formData.phone.trim()) newErrors.phone = 'Phone number is required';
     if (!formData.agreeToTerms) newErrors.agreeToTerms = 'You must agree to the terms';
-
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
@@ -37,10 +35,7 @@ const RegistrationForm: React.FC = () => {
     }));
 
     if (errors[name]) {
-      setErrors(prev => ({
-        ...prev,
-        [name]: ''
-      }));
+      setErrors(prev => ({ ...prev, [name]: '' }));
     }
   };
 
@@ -49,8 +44,9 @@ const RegistrationForm: React.FC = () => {
     if (!validateForm()) return;
 
     try {
-      const response = await fetch('https://script.google.com/macros/s/AKfycbw6A4EQT4tLiPyUPT0H77r65aL1eWYqsxaKcNbjyhrJlgVxwsQkHHF-LZqEIpkZksI6/exec', {
+      await fetch('https://script.google.com/macros/s/AKfycbw6A4EQT4tLiPyUPT0H77r65aL1eWYqsxaKcNbjyhrJlgVxwsQkHHF-LZqEIpkZksI6/exec', {
         method: 'POST',
+        mode: 'no-cors',
         headers: {
           'Content-Type': 'application/json'
         },
@@ -63,100 +59,92 @@ const RegistrationForm: React.FC = () => {
         })
       });
 
-      if (!response.ok) throw new Error('Failed to submit');
-
       setIsSubmitted(true);
-
-      // Redirect after successful submission
       setTimeout(() => {
-        window.location.href = 'https://docs.google.com/forms/d/e/1FAIpQLSfrREEvw5j8BN0A7h7S3Jwb1pz163QjjgqEzQymUIla9pvboA/viewform?usp=header';
+        window.location.href =
+          'https://docs.google.com/forms/d/e/1FAIpQLSfrREEvw5j8BN0A7h7S3Jwb1pz163QjjgqEzQymUIla9pvboA/viewform?usp=header';
       }, 1000);
-
     } catch (err) {
-      console.error('Error:', err);
+      console.error('Submission error:', err);
       alert('Something went wrong. Please try again.');
     }
   };
 
   return (
-    <section id="register" className="py-20 bg-black relative">
-      <div className="container mx-auto px-4 md:px-6 relative z-10">
-        <div className="text-center mb-16">
-          <h2 className="text-3xl md:text-4xl font-bold text-white mb-4">Register for the Webinar</h2>
-          <p className="text-gray-300 max-w-2xl mx-auto">
-            Secure your spot and take the first step toward building a successful franchise business.
-          </p>
-        </div>
-
+    <section id="register" className="py-20 bg-white">
+      <div className="container mx-auto px-4">
         <div className="max-w-3xl mx-auto">
-          {!isSubmitted ? (
-            <form onSubmit={handleSubmit} className="bg-white rounded-xl shadow-xl p-8 border border-gray-300">
-              <div className="mb-8">
-                <h3 className="text-2xl font-bold text-black mb-2">Personal Information</h3>
-                <p className="text-gray-600">Fill in your details below</p>
-              </div>
+          <div className="bg-white border border-gray-200 shadow-xl rounded-xl p-8">
+            <h2 className="text-3xl font-bold text-[#FF0200] mb-6 text-center">Register for the Franchise Webinar</h2>
+            {!isSubmitted ? (
+              <form onSubmit={handleSubmit} className="space-y-6">
+                {['name', 'email', 'phone'].map((field) => (
+                  <div key={field}>
+                    <label className="block text-gray-700 font-medium capitalize mb-2">
+                      {field === 'phone' ? 'Phone Number' : field.charAt(0).toUpperCase() + field.slice(1)}
+                    </label>
+                    <input
+                      type={field === 'email' ? 'email' : 'text'}
+                      name={field}
+                      value={(formData as any)[field]}
+                      onChange={handleChange}
+                      className="w-full px-4 py-3 border border-gray-300 rounded-md"
+                      placeholder={`Enter your ${field}`}
+                    />
+                    {errors[field] && <p className="text-red-500 text-sm mt-1">{errors[field]}</p>}
+                  </div>
+                ))}
 
-              {['name', 'email', 'phone'].map((field) => (
-                <div className="mb-4" key={field}>
-                  <label className="block text-gray-700 capitalize">{field}</label>
-                  <input
-                    type={field === 'email' ? 'email' : 'text'}
-                    name={field}
-                    value={(formData as any)[field]}
+                <div>
+                  <label className="block text-gray-700 font-medium mb-2">Business Experience (Optional)</label>
+                  <textarea
+                    name="experience"
+                    value={formData.experience}
                     onChange={handleChange}
-                    className="w-full border px-4 py-2 rounded"
+                    className="w-full px-4 py-3 border border-gray-300 rounded-md"
+                    placeholder="Briefly describe your business background"
                   />
-                  {errors[field] && <p className="text-red-500 text-sm">{errors[field]}</p>}
                 </div>
-              ))}
 
-              <div className="mb-4">
-                <label className="block text-gray-700">Business Experience (optional)</label>
-                <textarea
-                  name="experience"
-                  value={formData.experience}
-                  onChange={handleChange}
-                  className="w-full border px-4 py-2 rounded"
-                />
-              </div>
+                <div>
+                  <label className="block text-gray-700 font-medium mb-2">What do you expect from the webinar?</label>
+                  <textarea
+                    name="expectations"
+                    value={formData.expectations}
+                    onChange={handleChange}
+                    className="w-full px-4 py-3 border border-gray-300 rounded-md"
+                    placeholder="Mention your goals or curiosity"
+                  />
+                </div>
 
-              <div className="mb-4">
-                <label className="block text-gray-700">What do you expect from the webinar? (optional)</label>
-                <textarea
-                  name="expectations"
-                  value={formData.expectations}
-                  onChange={handleChange}
-                  className="w-full border px-4 py-2 rounded"
-                />
-              </div>
-
-              <div className="mb-4">
-                <label className="flex items-center">
+                <div className="flex items-start">
                   <input
                     type="checkbox"
                     name="agreeToTerms"
                     checked={formData.agreeToTerms}
                     onChange={handleChange}
-                    className="mr-2"
+                    className="mt-1 mr-2"
                   />
-                  <span className="text-gray-700">I agree to the terms and conditions</span>
-                </label>
+                  <label className="text-gray-700 text-sm">
+                    I agree to the terms and conditions
+                  </label>
+                </div>
                 {errors.agreeToTerms && <p className="text-red-500 text-sm">{errors.agreeToTerms}</p>}
-              </div>
 
-              <button
-                type="submit"
-                className="w-full py-2 rounded bg-[#FF0200] text-white font-bold"
-              >
-                Click here to make the payment
-              </button>
-            </form>
-          ) : (
-            <div className="bg-white rounded-xl shadow-xl p-8 text-center">
-              <h3 className="text-2xl font-bold text-green-600 mb-4">You're being redirected!</h3>
-              <p className="text-gray-700">Hang tight… you’re headed to the payment form.</p>
-            </div>
-          )}
+                <button
+                  type="submit"
+                  className="w-full bg-[#FF0200] text-white py-3 rounded-md font-semibold hover:bg-red-700 transition"
+                >
+                  Click here to make the payment
+                </button>
+              </form>
+            ) : (
+              <div className="text-center">
+                <h3 className="text-xl font-semibold text-green-600 mb-4">You're being redirected!</h3>
+                <p className="text-gray-700">Hang tight... You're heading to the payment form.</p>
+              </div>
+            )}
+          </div>
         </div>
       </div>
     </section>
