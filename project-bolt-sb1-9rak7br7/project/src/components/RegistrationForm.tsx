@@ -50,7 +50,7 @@ const RegistrationForm: React.FC = () => {
     setIsSubmitted(true);
 
     window.location.href =
-      'https://script.google.com/macros/s/AKfycbw6A4EQT4tLiPyUPT0H77r65aL1eWYqsxaKcNbjyhrJlgVxwsQkHHF-LZqEIpkZksI6/exec';
+      'https://docs.google.com/forms/d/e/1FAIpQLSfrREEvw5j8BN0A7h7S3Jwb1pz163QjjgqEzQymUIla9pvboA/viewform?usp=header';
   };
 
   return (
